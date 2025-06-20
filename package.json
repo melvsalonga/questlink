@@ -14,7 +14,15 @@
     "create-test-user": "node scripts/create-test-user.js",
     "cleanup-test-users": "node scripts/cleanup-test-users.js",
     "list-users": "node scripts/list-users.js",
-    "fix-auth-accounts": "node scripts/fix-auth-accounts.js"
+    "fix-auth-accounts": "node scripts/fix-auth-accounts.js",
+    "test-auth-flow": "node scripts/test-auth-flow.js",
+    "create-sample-auth-users": "node scripts/create-sample-auth-users.js",
+    "test-complete-auth": "node scripts/test-complete-auth.js",
+    "debug-email-validation": "node scripts/debug-email-validation.js",
+    "test-direct-supabase": "node scripts/test-direct-supabase.js",
+    "fix-database-complete": "node scripts/fix-database-complete.js",
+    "fix-auth-simple": "node scripts/fix-auth-simple.js",
+    "fix-sample-passwords": "node scripts/fix-sample-passwords.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

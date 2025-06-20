@@ -166,8 +166,7 @@ export interface Service {
   updated_at: string
 }
 
-// User roles and permissions
-export type UserRole = 'guest' | 'base' | 'specialist' | 'service_provider' | 'admin' | 'sub_admin'
+// User permissions interface
 
 export interface UserPermissions {
   canPostQuests: boolean

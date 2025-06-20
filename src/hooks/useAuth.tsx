@@ -46,22 +46,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
     try {
-      // For now, return a basic profile based on the auth user
-      // In a real app, you'd fetch from your custom users table
-      return {
-        id: userId,
-        email: user?.email || '',
-        first_name: user?.user_metadata?.first_name || 'User',
-        last_name: user?.user_metadata?.last_name || '',
-        mobile_number: user?.user_metadata?.mobile_number || '',
-        complete_address: user?.user_metadata?.complete_address || '',
-        user_role: 'base' as UserRole,
-        is_verified: false,
-        is_questor: true,
-        is_service_provider: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select(`
+          *,
+          profiles (
+            id,
+            description,
+            profile_picture,
+            alt_photo_description,
+            location,
+            social_links
+          )
+        `)
+        .eq('id', userId)
+        .single()
+
+      if (userError) {
+        console.error('Error fetching user from database:', userError)
+        // If user doesn't exist in our custom table, return null
+        // This will trigger user creation in the auth flow
+        return null
       }
+
+      return userData
     } catch (error) {
       console.error('Error fetching user profile:', error)
       return null
@@ -81,10 +89,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        
+
         if (session?.user) {
           setUser(session.user)
-          const profile = await fetchUserProfile(session.user.id)
+          let profile = await fetchUserProfile(session.user.id)
+
+          // If profile doesn't exist in our custom table, create it
+          if (!profile && session.user.user_metadata) {
+            const { data: newProfile, error } = await auth.createUserProfile(session.user.id, {
+              firstName: session.user.user_metadata.first_name || '',
+              lastName: session.user.user_metadata.last_name || '',
+              mobileNumber: session.user.user_metadata.mobile_number || '',
+              completeAddress: session.user.user_metadata.complete_address || ''
+            })
+
+            if (!error && newProfile) {
+              profile = newProfile
+            }
+          }
+
           setUserProfile(profile)
         }
       } catch (error) {
@@ -101,7 +124,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         if (session?.user) {
           setUser(session.user)
-          const profile = await fetchUserProfile(session.user.id)
+          let profile = await fetchUserProfile(session.user.id)
+
+          // If profile doesn't exist in our custom table, create it
+          if (!profile && session.user.user_metadata) {
+            const { data: newProfile, error } = await auth.createUserProfile(session.user.id, {
+              firstName: session.user.user_metadata.first_name || '',
+              lastName: session.user.user_metadata.last_name || '',
+              mobileNumber: session.user.user_metadata.mobile_number || '',
+              completeAddress: session.user.user_metadata.complete_address || ''
+            })
+
+            if (!error && newProfile) {
+              profile = newProfile
+            }
+          }
+
           setUserProfile(profile)
         } else {
           setUser(null)

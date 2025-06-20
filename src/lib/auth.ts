@@ -12,30 +12,58 @@ export const auth = {
     completeAddress: string
   }) {
     const supabase = createClient()
-    
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: userData.firstName,
-          last_name: userData.lastName,
-          mobile_number: userData.mobileNumber,
-          complete_address: userData.completeAddress,
+
+    // Clean and validate email before sending to Supabase
+    const cleanEmail = email.trim().toLowerCase()
+
+    // Basic email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailRegex.test(cleanEmail)) {
+      return { user: null, error: 'Please enter a valid email address' }
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password,
+        options: {
+          data: {
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            mobile_number: userData.mobileNumber,
+            complete_address: userData.completeAddress,
+          }
+        }
+      })
+
+      if (error) {
+        // Provide more specific error messages
+        if (error.message.includes('invalid email')) {
+          return { user: null, error: 'The email address format is not accepted. Please try a different email.' }
+        } else if (error.message.includes('already registered')) {
+          return { user: null, error: 'An account with this email already exists. Please sign in instead.' }
+        } else if (error.message.includes('signup')) {
+          return { user: null, error: 'Account registration is currently unavailable. Please try again later.' }
+        }
+        return { user: null, error: error.message }
+      }
+
+      // Create user profile after successful signup
+      if (data.user) {
+        const { data: userProfile, error: profileError } = await this.createUserProfile(data.user.id, userData)
+
+        if (profileError) {
+          console.error('Failed to create user profile:', profileError)
+          // Don't fail the signup if profile creation fails
+          // The user can still use the app and profile will be created on next login
         }
       }
-    })
 
-    if (error) {
-      return { user: null, error: error.message }
+      return { user: data.user, error: null }
+    } catch (err: any) {
+      console.error('Signup error:', err)
+      return { user: null, error: 'Registration failed. Please try again.' }
     }
-
-    // Create user profile after successful signup
-    if (data.user) {
-      await this.createUserProfile(data.user.id, userData)
-    }
-
-    return { user: data.user, error: null }
   },
 
   // Sign in with email and password
@@ -105,19 +133,96 @@ export const auth = {
     mobileNumber: string
     completeAddress: string
   }) {
-    // For demo purposes, we'll skip creating custom user profiles
-    // In a production app, you'd want to create a trigger or use a service role
-    // to insert into the custom users table after Supabase auth signup
-    console.log('User profile creation skipped for demo - using Supabase auth metadata')
-    return { error: null }
+    const supabase = createClient()
+
+    try {
+      // Get the current user's email from auth
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        return { data: null, error: 'No authenticated user found' }
+      }
+
+      // Create user in custom users table
+      const { data: newUser, error: userError } = await supabase
+        .from('users')
+        .insert([{
+          id: userId,
+          email: user.email,
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          mobile_number: userData.mobileNumber,
+          complete_address: userData.completeAddress,
+          password_hash: 'managed_by_supabase_auth', // Placeholder since Supabase handles auth
+          is_questor: true,
+          is_service_provider: false,
+          user_role: 'base',
+          is_verified: false
+        }])
+        .select()
+        .single()
+
+      if (userError) {
+        console.error('Error creating user:', userError)
+        return { data: null, error: userError.message }
+      }
+
+      // Create basic profile
+      const { data: newProfile, error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+          user_id: userId,
+          description: '',
+          location: '',
+          social_links: []
+        }])
+        .select()
+        .single()
+
+      if (profileError) {
+        console.error('Error creating profile:', profileError)
+        // Don't fail if profile creation fails, user creation succeeded
+      }
+
+      // Return the user with profile data
+      const userWithProfile = {
+        ...newUser,
+        profiles: newProfile ? [newProfile] : []
+      }
+
+      return { data: userWithProfile, error: null }
+    } catch (error) {
+      console.error('Error in createUserProfile:', error)
+      return { data: null, error: 'Failed to create user profile' }
+    }
   },
 
   // Update user role
   async updateUserRole(userId: string, role: UserRole) {
-    // For demo purposes, role updates are disabled
-    // In production, you'd update the custom users table
-    console.log('User role update skipped for demo')
-    return { error: null }
+    const supabase = createClient()
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update({
+          user_role: role,
+          // Update service provider flag based on role
+          is_service_provider: role === 'service_provider'
+        })
+        .eq('id', userId)
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error updating user role:', error)
+        return { error: error.message }
+      }
+
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error in updateUserRole:', error)
+      return { error: 'Failed to update user role' }
+    }
   },
 
   // Reset password

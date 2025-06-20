@@ -49,6 +49,14 @@ export function RegisterForm() {
       setError('Email is required')
       return false
     }
+
+    // Email format validation - more conservative pattern
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailRegex.test(formData.email.trim())) {
+      setError('Please enter a valid email address (e.g., user@example.com)')
+      return false
+    }
+
     if (!formData.password) {
       setError('Password is required')
       return false
@@ -89,14 +97,24 @@ export function RegisterForm() {
         mobileNumber: formData.mobileNumber,
         completeAddress: formData.completeAddress
       })
-      
+
       if (error) {
-        setError(error)
+        // Provide more user-friendly error messages
+        if (error.includes('already registered') || error.includes('already exists')) {
+          setError('An account with this email already exists. Please try signing in instead.')
+        } else if (error.includes('invalid email')) {
+          setError('Please enter a valid email address.')
+        } else if (error.includes('password')) {
+          setError('Password must be at least 6 characters long.')
+        } else {
+          setError(error)
+        }
       } else if (user) {
         router.push('/auth/verify-email')
       }
-    } catch (err) {
-      setError('An unexpected error occurred')
+    } catch (err: any) {
+      console.error('Registration error:', err)
+      setError(err?.message || 'An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -184,13 +202,14 @@ export function RegisterForm() {
               <Input
                 id="email"
                 name="email"
-                type="email"
+                type="text"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
                 className="pl-10"
                 required
                 disabled={loading}
+                autoComplete="email"
               />
             </div>
           </div>
