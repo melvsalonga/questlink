@@ -1,103 +1,262 @@
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Header } from "@/components/layout/Header";
+import { QuestCard } from "@/components/ui/quest-card";
+import { SkillCard } from "@/components/ui/skill-card";
+import { ServiceCard } from "@/components/ui/service-card";
+import { Badge } from "@/components/ui/badge";
+import { Sword, Users, Star, ArrowRight, Zap, Shield, Heart } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // Sample data for preview cards
+  const sampleQuest = {
+    id: '1',
+    title: 'Website Development for Local Bakery',
+    description: 'Need a professional website with online ordering system for my bakery business.',
+    pricing: 15000,
+    start_date: '2025-07-01',
+    end_date: '2025-07-15',
+    start_time: '09:00',
+    end_time: '17:00',
+    tags: ['Web Development', 'Business'],
+    location: 'Quezon City',
+    status: 'open' as const,
+    quest_owner_id: '1',
+    created_at: '2025-06-20',
+    updated_at: '2025-06-20',
+    users: {
+      first_name: 'Maria',
+      last_name: 'Santos',
+      profiles: [{
+        profile_picture: '',
+        location: 'Quezon City'
+      }]
+    }
+  }
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+  const sampleSkill = {
+    id: '1',
+    skill_name: 'React Development',
+    skill_category: 'Web Development',
+    proficiency: 'advanced' as const,
+    pricing: 750,
+    time_cost_per_hour: 60,
+    is_active: true,
+    user_id: '1',
+    created_at: '2025-06-20',
+    updated_at: '2025-06-20',
+    users: {
+      first_name: 'John',
+      last_name: 'Doe',
+      profiles: [{
+        profile_picture: '',
+        location: 'Manila'
+      }]
+    }
+  }
+
+  const sampleService = {
+    id: '1',
+    title: 'Computer Repair & Maintenance',
+    description: 'Professional computer diagnosis and repair services for homes and businesses.',
+    pricing: 500,
+    category_tags: ['Technology', 'Professional Services'],
+    available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    available_time: '9:00 AM - 6:00 PM',
+    is_active: true,
+    service_provider_id: '1',
+    created_at: '2025-06-20',
+    updated_at: '2025-06-20',
+    service_providers: {
+      title: 'TechFix Solutions',
+      location: 'Makati City',
+      is_verified: true,
+      users: {
+        first_name: 'Mike',
+        last_name: 'Wilson',
+        profiles: [{
+          profile_picture: ''
+        }]
+      }
+    }
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <Header />
+
+      {/* Hero Section */}
+      <main className="flex-1">
+        <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-purple-900/20 dark:to-slate-900">
+          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+          {/* Floating elements for anime aesthetic */}
+          <div className="absolute top-20 left-10 w-4 h-4 bg-blue-400 rounded-full animate-float opacity-60"></div>
+          <div className="absolute top-40 right-20 w-6 h-6 bg-purple-400 rounded-full animate-float opacity-40" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-40 left-20 w-3 h-3 bg-pink-400 rounded-full animate-float opacity-50" style={{animationDelay: '2s'}}></div>
+
+          <div className="relative container mx-auto px-4 py-24 sm:py-32">
+            <div className="text-center space-y-8">
+              {/* Logo/Brand */}
+              <div className="flex items-center justify-center space-x-3 mb-8">
+                <div className="relative">
+                  <Sword className="h-10 w-10 text-primary animate-float" />
+                  <div className="absolute inset-0 h-10 w-10 bg-primary/20 rounded-full animate-glow"></div>
+                </div>
+                <h1 className="text-5xl sm:text-7xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-shimmer">
+                  QuestLink
+                </h1>
+              </div>
+
+              {/* Tagline */}
+              <div className="space-y-6">
+                <h2 className="text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-300 dark:to-slate-100 bg-clip-text text-transparent">
+                  Real-World Quests. Real-Time Connections.
+                </h2>
+                <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  A freelance marketplace platform inspired by anime guild boards.
+                  Connect with specialists, post quests, and discover services in your area.
+                  <span className="block mt-2 text-primary font-medium">Join the adventure today!</span>
+                </p>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
+                <Button variant="quest" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-lg px-8 py-3" asChild>
+                  <Link href="/auth/register">
+                    Start Your Quest
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 hover:bg-primary/10 transition-all duration-300 text-lg px-8 py-3" asChild>
+                  <Link href="/skills">
+                    Browse Specialists
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-8 max-w-md mx-auto mt-16">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">1,000+</div>
+                  <div className="text-sm text-muted-foreground">Active Quests</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">500+</div>
+                  <div className="text-sm text-muted-foreground">Specialists</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">200+</div>
+                  <div className="text-sm text-muted-foreground">Services</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Preview Section */}
+        <section className="py-24 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                Explore What's Available
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Get a taste of the amazing quests, skills, and services on QuestLink
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Sample Quest */}
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Badge variant="quest">Featured Quest</Badge>
+                  <Zap className="h-4 w-4 text-yellow-500" />
+                </div>
+                <QuestCard quest={sampleQuest} showActions={false} />
+              </div>
+
+              {/* Sample Skill */}
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Badge variant="skill">Top Specialist</Badge>
+                  <Shield className="h-4 w-4 text-green-500" />
+                </div>
+                <SkillCard skill={sampleSkill} showActions={false} rating={4.8} />
+              </div>
+
+              {/* Sample Service */}
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Badge variant="service">Verified Service</Badge>
+                  <Heart className="h-4 w-4 text-red-500" />
+                </div>
+                <ServiceCard service={sampleService} showActions={false} rating={4.9} />
+              </div>
+            </div>
+
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg" asChild>
+                <Link href="/quests">
+                  View All Opportunities
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                How QuestLink Works
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Three simple ways to connect and get things done
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* QuestBoard */}
+              <div className="text-center p-8 rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-700">
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <Sword className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">QuestBoard</h3>
+                <p className="text-muted-foreground">
+                  Post tasks and projects you need help with. From quick errands to complex projects.
+                </p>
+              </div>
+
+              {/* SkillBoard */}
+              <div className="text-center p-8 rounded-lg border bg-gradient-to-br from-green-50 to-teal-50 dark:from-slate-800 dark:to-slate-700">
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                  <Star className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">SkillBoard</h3>
+                <p className="text-muted-foreground">
+                  Find and hire skilled specialists for your projects. Browse by expertise and availability.
+                </p>
+              </div>
+
+              {/* Service Providers */}
+              <div className="text-center p-8 rounded-lg border bg-gradient-to-br from-orange-50 to-red-50 dark:from-slate-800 dark:to-slate-700">
+                <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Service Providers</h3>
+                <p className="text-muted-foreground">
+                  Discover local businesses and services. From food delivery to professional services.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+
     </div>
   );
 }

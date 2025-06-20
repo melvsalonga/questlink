@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QuestLink
 
-## Getting Started
+**Real-World Quests. Real-Time Connections.**
 
-First, run the development server:
+A freelance marketplace platform inspired by anime guild boards, reimagined as a professional, real-world tool for connecting people who need help with tasks or services with individuals or businesses who can fulfill them.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🎯 Project Overview
+
+QuestLink serves both individuals and small business owners, allowing them to offer services, find reliable help, or build connections in a streamlined environment. While the branding takes subtle inspiration from the "quest board" concept seen in fantasy or anime themes, the functionality is entirely grounded in real-world use.
+
+### Key Features
+
+- **QuestBoard**: Post tasks and projects you need help with
+- **SkillBoard**: Find and hire skilled specialists for your projects
+- **Service Providers**: Discover local businesses and services
+- **User Roles**: Guest, Base, Specialist, Service Provider, Admin
+- **Real-time Connections**: Connect instantly with available specialists
+- **Anime-inspired Design**: Clean, modern interface with subtle anime aesthetics
+
+## 🚀 Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS v4, Custom CSS Variables
+- **UI Components**: Custom component library with Lucide React icons
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth with social login support
+- **Fonts**: Poppins (Google Fonts)
+- **Animations**: Framer Motion, Custom CSS animations
+- **Development**: ESLint, Prettier, Husky
+
+## 🛠️ Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm, yarn, or pnpm
+- Supabase account (for database and auth)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd questlink
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+   Update `.env.local` with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Authentication routes
+│   ├── (dashboard)/       # User dashboard routes
+│   ├── (public)/          # Public routes
+│   ├── api/               # API routes
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Landing page
+├── components/            # React components
+│   ├── ui/                # Reusable UI components
+│   ├── auth/              # Authentication components
+│   ├── quest/             # Quest-related components
+│   ├── skill/             # Skill-related components
+│   ├── service/           # Service-related components
+│   └── layout/            # Layout components
+├── lib/                   # Utility libraries
+├── hooks/                 # Custom React hooks
+├── types/                 # TypeScript type definitions
+└── utils/                 # Utility functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎨 Design System
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+QuestLink uses a custom design system with anime-inspired aesthetics:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Colors**: Custom CSS variables with theme support
+- **Typography**: Poppins font family
+- **Components**: Consistent styling with variant-based design
+- **Animations**: Floating, glowing, and shimmer effects
+- **Responsive**: Mobile-first design approach
 
-## Learn More
+## 🔧 Development
 
-To learn more about Next.js, take a look at the following resources:
+### Available Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Code Quality
 
-## Deploy on Vercel
+- **ESLint**: Code linting with Next.js config
+- **Prettier**: Code formatting
+- **Husky**: Git hooks for quality checks
+- **TypeScript**: Type safety
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 Version History
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **v0.1** - Initial project setup and architecture (Created by Cirqle, 5/23/2025)
+
+## 👨‍💻 Author
+
+**Cirqle**
+- Initial Creation: May 23, 2025
+- Project Lead & Developer
+
+## 📄 License
+
+This project is private and proprietary.
+
+---
+
+*QuestLink - Where real-world quests meet real-time connections.*
