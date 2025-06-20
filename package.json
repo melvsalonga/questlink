@@ -11,7 +11,10 @@
     "setup-env": "node scripts/setup-env.js",
     "test-connection": "node scripts/test-connection.js",
     "verify-database": "node scripts/verify-database.js",
-    "create-test-user": "node scripts/create-test-user.js"
+    "create-test-user": "node scripts/create-test-user.js",
+    "cleanup-test-users": "node scripts/cleanup-test-users.js",
+    "list-users": "node scripts/list-users.js",
+    "fix-auth-accounts": "node scripts/fix-auth-accounts.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
