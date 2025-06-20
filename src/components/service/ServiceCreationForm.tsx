@@ -254,7 +254,7 @@ export function ServiceCreationForm() {
           <div className="space-y-2">
             <Label htmlFor="pricing">Service Price (PHP) *</Label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
               <Input
                 id="pricing"
                 name="pricing"
@@ -264,7 +264,7 @@ export function ServiceCreationForm() {
                 onChange={handleInputChange}
                 required
                 disabled={loading}
-                className="pl-10"
+                className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                 min="1"
                 step="0.01"
               />

@@ -26,7 +26,8 @@
     "cleanup-database": "node scripts/cleanup-database.js",
     "deploy-auth-trigger": "node scripts/deploy-auth-trigger.js",
     "fix-uuid-mismatch": "node scripts/fix-uuid-mismatch.js",
-    "test-database-operations": "node scripts/test-database-operations.js"
+    "test-database-operations": "node scripts/test-database-operations.js",
+    "test-quest-performance": "node scripts/test-quest-performance.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

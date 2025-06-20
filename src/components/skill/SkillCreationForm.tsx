@@ -312,7 +312,7 @@ export function SkillCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="timeCostPerHour">Time Cost (Hours) *</Label>
               <div className="relative">
-                <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="timeCostPerHour"
                   name="timeCostPerHour"
@@ -322,7 +322,7 @@ export function SkillCreationForm() {
                   onChange={handleInputChange}
                   required
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                   min="0.5"
                   step="0.5"
                 />
@@ -335,7 +335,7 @@ export function SkillCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="pricing">Rate (PHP) *</Label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="pricing"
                   name="pricing"
@@ -345,7 +345,7 @@ export function SkillCreationForm() {
                   onChange={handleInputChange}
                   required
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                   min="1"
                   step="0.01"
                 />

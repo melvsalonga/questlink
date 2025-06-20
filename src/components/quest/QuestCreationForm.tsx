@@ -255,7 +255,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="startDate">Start Date *</Label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="startDate"
                   name="startDate"
@@ -264,7 +264,7 @@ export function QuestCreationForm() {
                   onChange={handleInputChange}
                   required
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                   min={new Date().toISOString().split('T')[0]}
                 />
               </div>
@@ -273,7 +273,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="endDate">End Date *</Label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="endDate"
                   name="endDate"
@@ -282,7 +282,7 @@ export function QuestCreationForm() {
                   onChange={handleInputChange}
                   required
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                   min={formData.startDate || new Date().toISOString().split('T')[0]}
                 />
               </div>
@@ -293,7 +293,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="startTime">Start Time</Label>
               <div className="relative">
-                <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="startTime"
                   name="startTime"
@@ -301,7 +301,7 @@ export function QuestCreationForm() {
                   value={formData.startTime}
                   onChange={handleInputChange}
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -309,7 +309,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="endTime">End Time</Label>
               <div className="relative">
-                <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Clock className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="endTime"
                   name="endTime"
@@ -317,7 +317,7 @@ export function QuestCreationForm() {
                   value={formData.endTime}
                   onChange={handleInputChange}
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -328,7 +328,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="pricing">Budget (PHP) *</Label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="pricing"
                   name="pricing"
@@ -338,7 +338,7 @@ export function QuestCreationForm() {
                   onChange={handleInputChange}
                   required
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                   min="1"
                   step="0.01"
                 />
@@ -348,7 +348,7 @@ export function QuestCreationForm() {
             <div className="space-y-2">
               <Label htmlFor="location">Location (Optional)</Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   id="location"
                   name="location"
@@ -356,7 +356,7 @@ export function QuestCreationForm() {
                   value={formData.location}
                   onChange={handleInputChange}
                   disabled={loading}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -409,7 +409,7 @@ export function QuestCreationForm() {
             {/* Custom Tag Input */}
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Tag className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Tag className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
                 <Input
                   name="newTag"
                   placeholder="Add custom tag..."
@@ -417,7 +417,7 @@ export function QuestCreationForm() {
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
                   disabled={loading || formData.tags.length >= 10}
-                  className="pl-10"
+                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
               <Button
@@ -425,6 +425,7 @@ export function QuestCreationForm() {
                 variant="outline"
                 onClick={handleAddNewTag}
                 disabled={!formData.newTag.trim() || formData.tags.length >= 10 || loading}
+                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <Plus className="h-4 w-4" />
               </Button>
