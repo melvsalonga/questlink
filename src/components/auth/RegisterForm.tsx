@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { validateEmail } from '@/lib/auth'
 
 export function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -45,15 +46,10 @@ export function RegisterForm() {
       setError('Last name is required')
       return false
     }
-    if (!formData.email.trim()) {
-      setError('Email is required')
-      return false
-    }
-
-    // Email format validation - more conservative pattern
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    if (!emailRegex.test(formData.email.trim())) {
-      setError('Please enter a valid email address (e.g., user@example.com)')
+    // Enhanced email validation
+    const emailValidation = validateEmail(formData.email)
+    if (!emailValidation.isValid) {
+      setError(emailValidation.error || 'Please enter a valid email address')
       return false
     }
 

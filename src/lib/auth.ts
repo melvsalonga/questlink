@@ -16,10 +16,10 @@ export const auth = {
     // Clean and validate email before sending to Supabase
     const cleanEmail = email.trim().toLowerCase()
 
-    // Basic email validation
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    if (!emailRegex.test(cleanEmail)) {
-      return { user: null, error: 'Please enter a valid email address' }
+    // Enhanced email validation with better error messages
+    const emailValidation = validateEmail(cleanEmail)
+    if (!emailValidation.isValid) {
+      return { user: null, error: emailValidation.error }
     }
 
     try {
@@ -163,7 +163,12 @@ export const auth = {
         .single()
 
       if (userError) {
-        console.error('Error creating user:', userError)
+        console.error('Error creating user:', {
+          message: userError.message,
+          details: userError.details,
+          hint: userError.hint,
+          code: userError.code
+        })
         return { data: null, error: userError.message }
       }
 
@@ -362,4 +367,79 @@ export const permissions = {
   canViewAdminPanel: (userRole: UserRole) => {
     return ['admin', 'sub_admin'].includes(userRole)
   }
+}
+
+// Email validation utility
+export function validateEmail(email: string): { isValid: boolean; error?: string } {
+  // Basic format check
+  if (!email || email.length === 0) {
+    return { isValid: false, error: 'Email address is required' }
+  }
+
+  // Trim and convert to lowercase
+  const cleanEmail = email.trim().toLowerCase()
+
+  // Check minimum length
+  if (cleanEmail.length < 5) {
+    return { isValid: false, error: 'Email address is too short' }
+  }
+
+  // Check maximum length (Supabase has limits)
+  if (cleanEmail.length > 254) {
+    return { isValid: false, error: 'Email address is too long' }
+  }
+
+  // Basic email regex - more permissive than before
+  const basicEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!basicEmailRegex.test(cleanEmail)) {
+    return { isValid: false, error: 'Please enter a valid email address format (e.g., user@example.com)' }
+  }
+
+  // More strict validation for common issues
+  const strictEmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+
+  if (!strictEmailRegex.test(cleanEmail)) {
+    // Check for common issues and provide specific feedback
+    if (cleanEmail.includes('..')) {
+      return { isValid: false, error: 'Email cannot contain consecutive dots' }
+    }
+    if (cleanEmail.startsWith('.') || cleanEmail.endsWith('.')) {
+      return { isValid: false, error: 'Email cannot start or end with a dot' }
+    }
+    if (cleanEmail.includes('@.') || cleanEmail.includes('.@')) {
+      return { isValid: false, error: 'Invalid characters around @ symbol' }
+    }
+    if ((cleanEmail.match(/@/g) || []).length !== 1) {
+      return { isValid: false, error: 'Email must contain exactly one @ symbol' }
+    }
+
+    return { isValid: false, error: 'Email format not accepted. Try a simpler format like user@gmail.com' }
+  }
+
+  // Check for potentially problematic domains or patterns
+  const domain = cleanEmail.split('@')[1]
+  if (domain) {
+    // Check for valid TLD
+    const tldRegex = /\.[a-zA-Z]{2,}$/
+    if (!tldRegex.test(domain)) {
+      return { isValid: false, error: 'Email domain must have a valid extension (e.g., .com, .org)' }
+    }
+
+    // Warn about potentially problematic domains
+    const problematicPatterns = [
+      /\.test$/,
+      /\.localhost$/,
+      /\.local$/,
+      /\.invalid$/,
+      /\.example$/
+    ]
+
+    for (const pattern of problematicPatterns) {
+      if (pattern.test(domain)) {
+        return { isValid: false, error: 'Please use a real email address, not a test or example domain' }
+      }
+    }
+  }
+
+  return { isValid: true }
 }

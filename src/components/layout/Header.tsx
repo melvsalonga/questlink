@@ -86,12 +86,39 @@ export function Header({ className }: HeaderProps) {
             {user ? (
               <>
                 {/* Create Button */}
-                <Button variant="default" size="sm" asChild>
-                  <Link href="/create">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create
-                  </Link>
-                </Button>
+                <div className="relative group">
+                  <Button variant="default" size="sm" className="flex items-center space-x-2">
+                    <Plus className="h-4 w-4" />
+                    <span>Create</span>
+                  </Button>
+
+                  {/* Create Dropdown Menu */}
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-background border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-1">
+                      <Link
+                        href="/create/quest"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <Sword className="h-4 w-4" />
+                        <span>Post a Quest</span>
+                      </Link>
+                      <Link
+                        href="/create/skill"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>Add a Skill</span>
+                      </Link>
+                      <Link
+                        href="/create/service"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span>Create Service</span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Notifications */}
                 <Button variant="ghost" size="sm" className="relative">
@@ -122,7 +149,7 @@ export function Header({ className }: HeaderProps) {
                   </Button>
 
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-background border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="absolute right-0 top-full mt-2 w-56 bg-background border rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-1">
                       <Link
                         href="/dashboard"
@@ -131,6 +158,31 @@ export function Header({ className }: HeaderProps) {
                         <User className="h-4 w-4" />
                         <span>Dashboard</span>
                       </Link>
+                      <div className="px-4 py-1">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Manage</p>
+                      </div>
+                      <Link
+                        href="/dashboard/quests"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <Sword className="h-4 w-4" />
+                        <span>My Quests</span>
+                      </Link>
+                      <Link
+                        href="/dashboard/skills"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <User className="h-4 w-4" />
+                        <span>My Skills</span>
+                      </Link>
+                      <Link
+                        href="/dashboard/services"
+                        className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span>My Services</span>
+                      </Link>
+                      <div className="border-t my-1"></div>
                       <Link
                         href="/profile"
                         className="flex items-center space-x-2 px-4 py-2 text-sm hover:bg-muted"

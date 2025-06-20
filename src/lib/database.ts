@@ -350,9 +350,82 @@ export async function deleteSkill(id: string) {
 export async function createService(serviceData: Omit<Service, 'id' | 'created_at' | 'updated_at'>) {
   const supabase = createClient()
 
+  // The serviceData.service_provider_id is actually a user_id
+  // We need to find or create a service_provider record first
+  const userId = serviceData.service_provider_id
+
+  // Check if user already has a service provider profile
+  let { data: serviceProvider, error: spError } = await supabase
+    .from('service_providers')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (spError && spError.code !== 'PGRST116') {
+    console.error('Error checking service provider:', spError)
+    return { data: null, error: spError.message }
+  }
+
+  // If no service provider profile exists, create one
+  if (!serviceProvider) {
+    // Get user info for the service provider profile
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('first_name, last_name, email, complete_address')
+      .eq('id', userId)
+      .single()
+
+    if (userError) {
+      console.error('Error fetching user for service provider:', userError)
+      return { data: null, error: 'User not found' }
+    }
+
+    // Create service provider profile
+    const { data: newServiceProvider, error: createSpError } = await supabase
+      .from('service_providers')
+      .insert([{
+        user_id: userId,
+        business_name: `${user.first_name} ${user.last_name}`,
+        business_description: serviceData.description,
+        business_address: user.complete_address || 'Address not provided',
+        contact_person: `${user.first_name} ${user.last_name}`,
+        business_phone: '+639000000000', // Default phone
+        business_email: user.email,
+        website_url: null,
+        business_hours: {
+          monday: '9:00-17:00',
+          tuesday: '9:00-17:00',
+          wednesday: '9:00-17:00',
+          thursday: '9:00-17:00',
+          friday: '9:00-17:00',
+          saturday: 'closed',
+          sunday: 'closed'
+        },
+        category_tags: serviceData.category_tags,
+        is_verified: false
+      }])
+      .select()
+      .single()
+
+    if (createSpError) {
+      console.error('Error creating service provider:', createSpError)
+      return { data: null, error: createSpError.message }
+    }
+
+    serviceProvider = newServiceProvider
+  }
+
+  if (!serviceProvider) {
+    return { data: null, error: 'Failed to create or find service provider profile' }
+  }
+
+  // Now create the service with the correct service_provider_id
   const { data, error } = await supabase
     .from('services')
-    .insert([serviceData])
+    .insert([{
+      ...serviceData,
+      service_provider_id: serviceProvider.id
+    }])
     .select()
     .single()
 
@@ -414,7 +487,12 @@ export async function applyToQuest(questId: string, applicantId: string, note?: 
     .single()
 
   if (error) {
-    console.error('Error applying to quest:', error)
+    console.error('Error applying to quest:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    })
     return { data: null, error: error.message }
   }
 
@@ -444,7 +522,17 @@ export async function hireSpecialist(
     .single()
 
   if (skillError) {
+    console.error('Error fetching skill:', {
+      message: skillError.message,
+      details: skillError.details,
+      hint: skillError.hint,
+      code: skillError.code
+    })
     return { data: null, error: skillError.message }
+  }
+
+  if (!skill) {
+    return { data: null, error: 'Skill not found' }
   }
 
   // Get the specialist profile for this user
@@ -455,7 +543,17 @@ export async function hireSpecialist(
     .single()
 
   if (specialistError) {
+    console.error('Error fetching specialist:', {
+      message: specialistError.message,
+      details: specialistError.details,
+      hint: specialistError.hint,
+      code: specialistError.code
+    })
     return { data: null, error: 'User is not a specialist' }
+  }
+
+  if (!specialist) {
+    return { data: null, error: 'Specialist profile not found' }
   }
 
   const { data, error } = await supabase
@@ -477,7 +575,12 @@ export async function hireSpecialist(
     .single()
 
   if (error) {
-    console.error('Error hiring specialist:', error)
+    console.error('Error hiring specialist:', {
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      code: error.code
+    })
     return { data: null, error: error.message }
   }
 
@@ -566,6 +669,85 @@ export async function getUserRequests(userId: string, type: 'sent' | 'received' 
 
   if (error) {
     console.error('Error fetching user requests:', error)
+    return { data: null, error: error.message }
+  }
+
+  return { data, error: null }
+}
+
+// User-specific data operations
+export async function getQuestsByOwnerId(ownerId: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('quests')
+    .select(`
+      *,
+      users!quest_owner_id (
+        first_name,
+        last_name,
+        profiles (
+          profile_picture,
+          location
+        )
+      )
+    `)
+    .eq('quest_owner_id', ownerId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user quests:', error)
+    return { data: null, error: error.message }
+  }
+
+  return { data, error: null }
+}
+
+export async function getSkillsByUserId(userId: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('skills')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user skills:', error)
+    return { data: null, error: error.message }
+  }
+
+  return { data, error: null }
+}
+
+export async function getServicesByProviderId(userId: string) {
+  const supabase = createClient()
+
+  // First get the service provider ID for this user
+  const { data: serviceProvider, error: spError } = await supabase
+    .from('service_providers')
+    .select('id')
+    .eq('user_id', userId)
+    .single()
+
+  if (spError) {
+    if (spError.code === 'PGRST116') {
+      // No service provider profile found, return empty array
+      return { data: [], error: null }
+    }
+    console.error('Error fetching service provider:', spError)
+    return { data: null, error: spError.message }
+  }
+
+  // Now get services for this service provider
+  const { data, error } = await supabase
+    .from('services')
+    .select('*')
+    .eq('service_provider_id', serviceProvider.id)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user services:', error)
     return { data: null, error: error.message }
   }
 

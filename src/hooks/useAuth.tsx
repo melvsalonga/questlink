@@ -63,7 +63,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single()
 
       if (userError) {
-        console.error('Error fetching user from database:', userError)
+        console.error('Error fetching user from database:', {
+          message: userError.message,
+          details: userError.details,
+          hint: userError.hint,
+          code: userError.code
+        })
         // If user doesn't exist in our custom table, return null
         // This will trigger user creation in the auth flow
         return null
