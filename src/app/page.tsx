@@ -103,7 +103,7 @@ export default function Home() {
                   <Sword className="h-10 w-10 text-primary animate-float" />
                   <div className="absolute inset-0 h-10 w-10 bg-primary/20 rounded-full animate-glow"></div>
                 </div>
-                <h1 className="text-5xl sm:text-7xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent animate-shimmer">
+                <h1 className="text-5xl sm:text-7xl font-bold text-primary">
                   QuestLink
                 </h1>
               </div>
@@ -114,7 +114,7 @@ export default function Home() {
                   Real-World Quests. Real-Time Connections.
                 </h2>
                 <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  A freelance marketplace platform inspired by anime guild boards.
+                  A freelance marketplace platform by <span className="font-semibold text-primary">Cirqle</span>, inspired by anime guild boards.
                   Connect with specialists, post quests, and discover services in your area.
                   <span className="block mt-2 text-primary font-medium">Join the adventure today!</span>
                 </p>
@@ -123,13 +123,13 @@ export default function Home() {
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
                 <Button variant="quest" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 text-lg px-8 py-3" asChild>
-                  <Link href="/auth/register">
+                  <Link href="/auth/register" className="flex items-center justify-center whitespace-nowrap">
                     Start Your Quest
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0" />
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 hover:bg-primary/10 transition-all duration-300 text-lg px-8 py-3" asChild>
-                  <Link href="/skills">
+                  <Link href="/skills" className="flex items-center justify-center">
                     Browse Specialists
                   </Link>
                 </Button>
@@ -197,9 +197,9 @@ export default function Home() {
 
             <div className="text-center mt-12">
               <Button variant="outline" size="lg" asChild>
-                <Link href="/quests">
+                <Link href="/quests" className="flex items-center justify-center whitespace-nowrap">
                   View All Opportunities
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
                 </Link>
               </Button>
             </div>

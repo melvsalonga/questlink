@@ -133,7 +133,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="text-sm text-muted-foreground">
-            © {currentYear} QuestLink. All rights reserved. Built with ❤️ in the Philippines.
+            © {currentYear} QuestLink by <span className="font-semibold text-primary">Cirqle</span>. All rights reserved. Built with ❤️ in the Philippines.
           </div>
 
           {/* Social Links */}
@@ -177,7 +177,7 @@ export function Footer() {
         {/* Additional Info */}
         <div className="mt-8 pt-8 border-t text-center">
           <p className="text-xs text-muted-foreground max-w-2xl mx-auto">
-            QuestLink is a registered trademark. This platform connects freelancers and clients 
+            QuestLink is a registered trademark of <span className="font-semibold text-primary">Cirqle</span>. This platform connects freelancers and clients
             in the Philippines. All transactions are subject to our terms of service and local regulations.
           </p>
         </div>

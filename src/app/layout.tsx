@@ -12,8 +12,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "QuestLink - Real-World Quests. Real-Time Connections.",
-  description: "A freelance marketplace platform inspired by anime guild boards. Connect with specialists, post quests, and discover services in your area.",
-  keywords: ["freelance", "marketplace", "quests", "services", "specialists", "guild board"],
+  description: "A freelance marketplace platform by Cirqle, inspired by anime guild boards. Connect with specialists, post quests, and discover services in your area.",
+  keywords: ["freelance", "marketplace", "quests", "services", "specialists", "guild board", "cirqle"],
   authors: [{ name: "Cirqle" }],
   creator: "Cirqle",
   openGraph: {
