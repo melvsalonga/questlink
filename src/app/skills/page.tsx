@@ -7,131 +7,101 @@ import { SearchFilter } from '@/components/ui/search-filter'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { SkeletonGrid } from '@/components/ui/loading'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Plus, Filter, Grid, List, Star } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { getSkills, hireSpecialist } from '@/lib/database'
+import type { Skill, SearchFilters } from '@/types/database'
 
 export default function SkillBoard() {
   const { user } = useAuth()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [skills, setSkills] = useState([])
+  const [skills, setSkills] = useState<Skill[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<SearchFilters>({})
+  const [searchQuery, setSearchQuery] = useState('')
+  const [hiringSpecialist, setHiringSpecialist] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // Sample skill data for now
-  const sampleSkills = [
-    {
-      id: '1',
-      skill_name: 'React Development',
-      skill_category: 'Web Development',
-      skill_sub_category: 'Frontend',
-      proficiency: 'advanced' as const,
-      pricing: 750,
-      time_cost_per_hour: 60,
-      is_active: true,
-      user_id: '1',
-      created_at: '2025-06-20',
-      updated_at: '2025-06-20',
-      users: {
-        first_name: 'John',
-        last_name: 'Doe',
-        profiles: [{
-          profile_picture: '',
-          location: 'Manila'
-        }]
+  // Load skills from database
+  const loadSkills = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const { data, error: dbError } = await getSkills(filters, { page: 1, limit: 20 })
+
+      if (dbError) {
+        setError(dbError)
+      } else {
+        setSkills(data || [])
       }
-    },
-    {
-      id: '2',
-      skill_name: 'Graphic Design',
-      skill_category: 'Design',
-      skill_sub_category: 'Visual Design',
-      proficiency: 'expert' as const,
-      pricing: 600,
-      time_cost_per_hour: 45,
-      is_active: true,
-      user_id: '2',
-      created_at: '2025-06-19',
-      updated_at: '2025-06-19',
-      users: {
-        first_name: 'Anna',
-        last_name: 'Garcia',
-        profiles: [{
-          profile_picture: '',
-          location: 'Quezon City'
-        }]
-      }
-    },
-    {
-      id: '3',
-      skill_name: 'Content Writing',
-      skill_category: 'Writing',
-      skill_sub_category: 'Technical Writing',
-      proficiency: 'intermediate' as const,
-      pricing: 400,
-      time_cost_per_hour: 30,
-      is_active: true,
-      user_id: '3',
-      created_at: '2025-06-18',
-      updated_at: '2025-06-18',
-      users: {
-        first_name: 'Mike',
-        last_name: 'Johnson',
-        profiles: [{
-          profile_picture: '',
-          location: 'Makati City'
-        }]
-      }
-    },
-    {
-      id: '4',
-      skill_name: 'Python Programming',
-      skill_category: 'Programming',
-      skill_sub_category: 'Backend Development',
-      proficiency: 'expert' as const,
-      pricing: 900,
-      time_cost_per_hour: 60,
-      is_active: true,
-      user_id: '4',
-      created_at: '2025-06-17',
-      updated_at: '2025-06-17',
-      users: {
-        first_name: 'Sarah',
-        last_name: 'Chen',
-        profiles: [{
-          profile_picture: '',
-          location: 'BGC, Taguig'
-        }]
-      }
+    } catch (err) {
+      setError('Failed to load skills. Please try again.')
+      console.error('Error loading skills:', err)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setSkills(sampleSkills)
-      setLoading(false)
-    }, 1000)
-  }, [])
+    loadSkills()
+  }, [filters])
 
   const handleSearch = (query: string) => {
-    console.log('Search:', query)
-    // Implement search logic
+    setSearchQuery(query)
+    // For now, we'll implement text search by filtering the current results
+    if (query.trim()) {
+      const filtered = skills.filter(skill =>
+        skill.skill_name.toLowerCase().includes(query.toLowerCase()) ||
+        skill.skill_category.toLowerCase().includes(query.toLowerCase()) ||
+        (skill.skill_sub_category && skill.skill_sub_category.toLowerCase().includes(query.toLowerCase()))
+      )
+      setSkills(filtered)
+    } else {
+      loadSkills() // Reload all skills if search is cleared
+    }
   }
 
-  const handleFilter = (filters: any) => {
-    console.log('Filters:', filters)
-    // Implement filter logic
+  const handleFilter = (newFilters: SearchFilters) => {
+    setFilters(newFilters)
+    // The useEffect will trigger loadSkills with new filters
   }
 
-  const handleHire = (skillId: string) => {
-    console.log('Hire specialist:', skillId)
-    // Implement hire logic
+  const handleHireSpecialist = async (skillId: string) => {
+    if (!user) {
+      setError('Please log in to hire specialists')
+      return
+    }
+
+    try {
+      setHiringSpecialist(skillId)
+      setError(null)
+
+      const { error: hireError } = await hireSpecialist(skillId, user.id)
+
+      if (hireError) {
+        setError(hireError)
+      } else {
+        setSuccessMessage('Hiring request sent successfully!')
+        setTimeout(() => setSuccessMessage(null), 3000)
+      }
+    } catch (err) {
+      setError('Failed to send hiring request. Please try again.')
+      console.error('Error hiring specialist:', err)
+    } finally {
+      setHiringSpecialist(null)
+    }
   }
 
-  const handleView = (skillId: string) => {
-    console.log('View specialist:', skillId)
-    // Navigate to specialist profile
+  const handleViewSkill = (skillId: string) => {
+    // Navigate to skill details page (to be implemented)
+    console.log('View skill:', skillId)
   }
+
+
 
   const getRandomRating = () => {
     return Math.random() * (5 - 4) + 4 // Random rating between 4.0 and 5.0
@@ -188,6 +158,34 @@ export default function SkillBoard() {
             onFilter={handleFilter}
           />
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6">
+            <Alert variant="destructive">
+              <AlertDescription>
+                {error}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                  onClick={loadSkills}
+                >
+                  Try Again
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6">
+            <Alert variant="success">
+              <AlertDescription>{successMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         {/* Featured Categories */}
         <div className="mb-8">
@@ -248,8 +246,8 @@ export default function SkillBoard() {
               <SkillCard
                 key={skill.id}
                 skill={skill}
-                onHire={handleHire}
-                onView={handleView}
+                onHire={handleHireSpecialist}
+                onView={handleViewSkill}
                 rating={getRandomRating()}
                 className={viewMode === 'list' ? 'max-w-none' : ''}
               />

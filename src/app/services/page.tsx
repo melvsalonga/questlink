@@ -7,146 +7,87 @@ import { SearchFilter } from '@/components/ui/search-filter'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { SkeletonGrid } from '@/components/ui/loading'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Plus, Filter, Grid, List, Building, MapPin } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { getServices } from '@/lib/database'
+import type { Service, SearchFilters } from '@/types/database'
 
 export default function ServicesPage() {
   const { user } = useAuth()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [services, setServices] = useState<any[]>([])
+  const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<SearchFilters>({})
+  const [searchQuery, setSearchQuery] = useState('')
+  const [contactingProvider, setContactingProvider] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // Sample service data for now
-  const sampleServices = [
-    {
-      id: '1',
-      title: 'Computer Repair & Maintenance',
-      description: 'Professional computer diagnosis and repair services for homes and businesses. We fix laptops, desktops, and provide maintenance services.',
-      pricing: 500,
-      category_tags: ['Technology', 'Professional Services', 'Computer Repair'],
-      available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      available_time: '9:00 AM - 6:00 PM',
-      is_active: true,
-      service_provider_id: '1',
-      created_at: '2025-06-20',
-      updated_at: '2025-06-20',
-      service_providers: {
-        id: '1',
-        title: 'TechFix Solutions',
-        description: 'Professional computer repair services',
-        location: 'Makati City',
-        available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        available_time: '9:00 AM - 6:00 PM',
-        is_verified: true,
-        is_active: true,
-        user_id: '1',
-        created_at: '2025-06-20',
-        updated_at: '2025-06-20',
-        users: {
-          first_name: 'Mike',
-          last_name: 'Wilson',
-          profiles: [{
-            profile_picture: ''
-          }]
-        }
+  // Load services from database
+  const loadServices = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const { data, error: dbError } = await getServices(filters, { page: 1, limit: 20 })
+
+      if (dbError) {
+        setError(dbError)
+      } else {
+        setServices(data || [])
       }
-    },
-    {
-      id: '2',
-      title: 'Home Cleaning Services',
-      description: 'Professional residential cleaning services. Deep cleaning, regular maintenance, and post-construction cleanup available.',
-      pricing: 800,
-      category_tags: ['Home Services', 'Cleaning', 'Residential'],
-      available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      available_time: '8:00 AM - 5:00 PM',
-      is_active: true,
-      service_provider_id: '2',
-      created_at: '2025-06-19',
-      updated_at: '2025-06-19',
-      service_providers: {
-        id: '2',
-        title: 'CleanPro Services',
-        description: 'Professional cleaning services',
-        location: 'Quezon City',
-        available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        available_time: '8:00 AM - 5:00 PM',
-        is_verified: true,
-        is_active: true,
-        user_id: '2',
-        created_at: '2025-06-19',
-        updated_at: '2025-06-19',
-        users: {
-          first_name: 'Lisa',
-          last_name: 'Rodriguez',
-          profiles: [{
-            profile_picture: ''
-          }]
-        }
-      }
-    },
-    {
-      id: '3',
-      title: 'Food Delivery Service',
-      description: 'Fast and reliable food delivery from your favorite local restaurants. Hot meals delivered fresh to your doorstep.',
-      pricing: 50,
-      category_tags: ['Food & Beverage', 'Delivery', 'Restaurant'],
-      available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-      available_time: '10:00 AM - 10:00 PM',
-      is_active: true,
-      service_provider_id: '3',
-      created_at: '2025-06-18',
-      updated_at: '2025-06-18',
-      service_providers: {
-        id: '3',
-        title: 'QuickBite Delivery',
-        description: 'Fast food delivery service',
-        location: 'Manila',
-        available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        available_time: '10:00 AM - 10:00 PM',
-        is_verified: false,
-        is_active: true,
-        user_id: '3',
-        created_at: '2025-06-18',
-        updated_at: '2025-06-18',
-        users: {
-          first_name: 'Carlos',
-          last_name: 'Mendoza',
-          profiles: [{
-            profile_picture: ''
-          }]
-        }
-      }
+    } catch (err) {
+      setError('Failed to load services. Please try again.')
+      console.error('Error loading services:', err)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setServices(sampleServices)
-      setLoading(false)
-    }, 1000)
-  }, [])
+    loadServices()
+  }, [filters])
 
   const handleSearch = (query: string) => {
-    console.log('Search:', query)
-    // Implement search logic
+    setSearchQuery(query)
+    // For now, we'll implement text search by filtering the current results
+    if (query.trim()) {
+      const filtered = services.filter(service =>
+        service.title.toLowerCase().includes(query.toLowerCase()) ||
+        service.description.toLowerCase().includes(query.toLowerCase()) ||
+        service.category_tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      )
+      setServices(filtered)
+    } else {
+      loadServices() // Reload all services if search is cleared
+    }
   }
 
-  const handleFilter = (filters: any) => {
-    console.log('Filters:', filters)
-    // Implement filter logic
+  const handleFilter = (newFilters: SearchFilters) => {
+    setFilters(newFilters)
+    // The useEffect will trigger loadServices with new filters
   }
 
-  const handleContact = (serviceId: string) => {
-    console.log('Contact service:', serviceId)
-    // Implement contact logic
+  const handleContactProvider = async (serviceId: string) => {
+    if (!user) {
+      setError('Please log in to contact service providers')
+      return
+    }
+
+    // For now, just show a success message
+    // In a real app, you'd implement a messaging system or contact form
+    setSuccessMessage('Contact feature coming soon! For now, you can view the service details.')
+    setTimeout(() => setSuccessMessage(null), 3000)
   }
 
-  const handleView = (serviceId: string) => {
+  const handleViewService = (serviceId: string) => {
+    // Navigate to service details page (to be implemented)
     console.log('View service:', serviceId)
-    // Navigate to service details
   }
+
+
 
   const getRandomRating = () => {
     return Math.random() * (5 - 3.5) + 3.5 // Random rating between 3.5 and 5.0
@@ -203,6 +144,34 @@ export default function ServicesPage() {
             onFilter={handleFilter}
           />
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6">
+            <Alert variant="destructive">
+              <AlertDescription>
+                {error}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                  onClick={loadServices}
+                >
+                  Try Again
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6">
+            <Alert variant="success">
+              <AlertDescription>{successMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         {/* Featured Categories */}
         <div className="mb-8">
@@ -263,8 +232,8 @@ export default function ServicesPage() {
               <ServiceCard
                 key={service.id}
                 service={service}
-                onContact={handleContact}
-                onView={handleView}
+                onContact={handleContactProvider}
+                onView={handleViewService}
                 rating={getRandomRating()}
                 className={viewMode === 'list' ? 'max-w-none' : ''}
               />

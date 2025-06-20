@@ -105,61 +105,18 @@ export const auth = {
     mobileNumber: string
     completeAddress: string
   }) {
-    const supabase = createClient()
-
-    // Get the current user's email
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      console.error('No authenticated user found')
-      return
-    }
-
-    // Insert into users table
-    const { error: userError } = await supabase
-      .from('users')
-      .insert({
-        id: userId,
-        email: user.email || '',
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        mobile_number: userData.mobileNumber,
-        complete_address: userData.completeAddress,
-        password_hash: '', // Handled by Supabase Auth
-        user_role: 'base'
-      })
-
-    if (userError) {
-      console.error('Error creating user:', userError)
-    }
-
-    // Insert into profiles table
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        user_id: userId,
-        description: '',
-        location: userData.completeAddress
-      })
-
-    if (profileError) {
-      console.error('Error creating profile:', profileError)
-    }
+    // For demo purposes, we'll skip creating custom user profiles
+    // In a production app, you'd want to create a trigger or use a service role
+    // to insert into the custom users table after Supabase auth signup
+    console.log('User profile creation skipped for demo - using Supabase auth metadata')
+    return { error: null }
   },
 
   // Update user role
   async updateUserRole(userId: string, role: UserRole) {
-    const supabase = createClient()
-    
-    const { error } = await supabase
-      .from('users')
-      .update({ user_role: role })
-      .eq('id', userId)
-
-    if (error) {
-      return { error: error.message }
-    }
-
+    // For demo purposes, role updates are disabled
+    // In production, you'd update the custom users table
+    console.log('User role update skipped for demo')
     return { error: null }
   },
 

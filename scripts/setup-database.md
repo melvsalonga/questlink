@@ -43,12 +43,13 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### 4. Run Database Migrations
 
-#### Option A: Using Supabase Dashboard (Recommended for beginners)
+#### Option A: Using Supabase Dashboard (Recommended)
 
 1. Go to **SQL Editor** in your Supabase dashboard
-2. Copy and paste the content from `supabase/migrations/001_initial_schema.sql`
-3. Click "Run" to execute the migration
-4. Repeat for `002_rls_policies.sql` and `003_functions_and_sample_data.sql`
+2. Copy and paste the content from `supabase/complete-setup.sql`
+3. Click "Run" to execute the complete schema setup
+4. Copy and paste the content from `supabase/rls-and-sample-data.sql`
+5. Click "Run" to add sample data and complete the setup
 
 #### Option B: Using Supabase CLI
 
@@ -92,14 +93,19 @@ If you plan to handle file uploads:
 
 ### 7. Verify Setup
 
-1. Start your development server:
+1. Run the database verification script:
+   ```bash
+   node scripts/verify-database.js
+   ```
+
+2. Start your development server:
    ```bash
    npm run dev
    ```
 
-2. Check the browser console for any connection errors
-3. Try creating a test user account
-4. Verify data appears in your Supabase dashboard
+3. Check the browser console for any connection errors
+4. Try creating a test user account
+5. Verify data appears in your Supabase dashboard
 
 ## Database Schema Overview
 

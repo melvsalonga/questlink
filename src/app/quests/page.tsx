@@ -7,119 +7,102 @@ import { SearchFilter } from '@/components/ui/search-filter'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { SkeletonGrid } from '@/components/ui/loading'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Plus, Filter, Grid, List } from 'lucide-react'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import { getQuests, applyToQuest } from '@/lib/database'
+import type { Quest, SearchFilters } from '@/types/database'
 
 export default function QuestBoard() {
   const { user } = useAuth()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [quests, setQuests] = useState<any[]>([])
+  const [quests, setQuests] = useState<Quest[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<SearchFilters>({})
+  const [searchQuery, setSearchQuery] = useState('')
+  const [applyingToQuest, setApplyingToQuest] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  // Sample quest data for now
-  const sampleQuests = [
-    {
-      id: '1',
-      title: 'Website Development for Local Bakery',
-      description: 'Need a professional website with online ordering system for my bakery business. Looking for someone experienced with e-commerce platforms.',
-      pricing: 15000,
-      start_date: '2025-07-01',
-      end_date: '2025-07-15',
-      start_time: '09:00',
-      end_time: '17:00',
-      tags: ['Web Development', 'E-commerce', 'Business'],
-      location: 'Quezon City',
-      status: 'open' as const,
-      quest_owner_id: '1',
-      created_at: '2025-06-20',
-      updated_at: '2025-06-20',
-      users: {
-        first_name: 'Maria',
-        last_name: 'Santos',
-        profiles: [{
-          profile_picture: '',
-          location: 'Quezon City'
-        }]
+  // Load quests from database
+  const loadQuests = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const { data, error: dbError } = await getQuests(filters, { page: 1, limit: 20 })
+
+      if (dbError) {
+        setError(dbError)
+      } else {
+        setQuests(data || [])
       }
-    },
-    {
-      id: '2',
-      title: 'Mobile App UI/UX Design',
-      description: 'Looking for a talented designer to create modern and intuitive UI/UX for our fitness tracking mobile app.',
-      pricing: 8000,
-      start_date: '2025-06-25',
-      end_date: '2025-07-10',
-      start_time: '10:00',
-      end_time: '18:00',
-      tags: ['UI/UX Design', 'Mobile App', 'Fitness'],
-      location: 'Makati City',
-      status: 'open' as const,
-      quest_owner_id: '2',
-      created_at: '2025-06-19',
-      updated_at: '2025-06-19',
-      users: {
-        first_name: 'John',
-        last_name: 'Cruz',
-        profiles: [{
-          profile_picture: '',
-          location: 'Makati City'
-        }]
-      }
-    },
-    {
-      id: '3',
-      title: 'Content Writing for Tech Blog',
-      description: 'Need experienced tech writers to create engaging articles about AI, blockchain, and emerging technologies.',
-      pricing: 2500,
-      start_date: '2025-06-22',
-      end_date: '2025-06-30',
-      start_time: '09:00',
-      end_time: '17:00',
-      tags: ['Content Writing', 'Technology', 'AI', 'Blockchain'],
-      location: 'Remote',
-      status: 'open' as const,
-      quest_owner_id: '3',
-      created_at: '2025-06-18',
-      updated_at: '2025-06-18',
-      users: {
-        first_name: 'Sarah',
-        last_name: 'Lee',
-        profiles: [{
-          profile_picture: '',
-          location: 'Manila'
-        }]
-      }
+    } catch (err) {
+      setError('Failed to load quests. Please try again.')
+      console.error('Error loading quests:', err)
+    } finally {
+      setLoading(false)
     }
-  ]
+  }
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setQuests(sampleQuests)
-      setLoading(false)
-    }, 1000)
-  }, [])
+    loadQuests()
+  }, [filters])
 
   const handleSearch = (query: string) => {
-    console.log('Search:', query)
-    // Implement search logic
+    setSearchQuery(query)
+    // For now, we'll implement text search by filtering the current results
+    // In a production app, you'd want to do this server-side
+    if (query.trim()) {
+      const filtered = quests.filter(quest =>
+        quest.title.toLowerCase().includes(query.toLowerCase()) ||
+        quest.description.toLowerCase().includes(query.toLowerCase()) ||
+        quest.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      )
+      setQuests(filtered)
+    } else {
+      loadQuests() // Reload all quests if search is cleared
+    }
   }
 
-  const handleFilter = (filters: any) => {
-    console.log('Filters:', filters)
-    // Implement filter logic
+  const handleFilter = (newFilters: SearchFilters) => {
+    setFilters(newFilters)
+    // The useEffect will trigger loadQuests with new filters
   }
 
-  const handleApply = (questId: string) => {
-    console.log('Apply to quest:', questId)
-    // Implement apply logic
+  const handleApplyToQuest = async (questId: string) => {
+    if (!user) {
+      setError('Please log in to apply to quests')
+      return
+    }
+
+    try {
+      setApplyingToQuest(questId)
+      setError(null)
+
+      const { error: applyError } = await applyToQuest(questId, user.id)
+
+      if (applyError) {
+        setError(applyError)
+      } else {
+        setSuccessMessage('Application submitted successfully!')
+        setTimeout(() => setSuccessMessage(null), 3000)
+      }
+    } catch (err) {
+      setError('Failed to apply to quest. Please try again.')
+      console.error('Error applying to quest:', err)
+    } finally {
+      setApplyingToQuest(null)
+    }
   }
 
-  const handleView = (questId: string) => {
+  const handleViewQuest = (questId: string) => {
+    // Navigate to quest details page (to be implemented)
     console.log('View quest:', questId)
-    // Navigate to quest details
   }
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -173,6 +156,34 @@ export default function QuestBoard() {
           />
         </div>
 
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6">
+            <Alert variant="destructive">
+              <AlertDescription>
+                {error}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                  onClick={loadQuests}
+                >
+                  Try Again
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6">
+            <Alert variant="success">
+              <AlertDescription>{successMessage}</AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         {/* Results Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
@@ -203,8 +214,8 @@ export default function QuestBoard() {
               <QuestCard
                 key={quest.id}
                 quest={quest}
-                onApply={handleApply}
-                onView={handleView}
+                onApply={handleApplyToQuest}
+                onView={handleViewQuest}
                 className={viewMode === 'list' ? 'max-w-none' : ''}
               />
             ))}

@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-db": "node scripts/setup-questlink-db.js",
+    "setup-env": "node scripts/setup-env.js",
+    "test-connection": "node scripts/test-connection.js",
+    "verify-database": "node scripts/verify-database.js",
+    "create-test-user": "node scripts/create-test-user.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

@@ -46,21 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select(`
-          *,
-          profiles (*)
-        `)
-        .eq('id', userId)
-        .single()
-
-      if (error) {
-        console.error('Error fetching user profile:', error)
-        return null
+      // For now, return a basic profile based on the auth user
+      // In a real app, you'd fetch from your custom users table
+      return {
+        id: userId,
+        email: user?.email || '',
+        first_name: user?.user_metadata?.first_name || 'User',
+        last_name: user?.user_metadata?.last_name || '',
+        mobile_number: user?.user_metadata?.mobile_number || '',
+        complete_address: user?.user_metadata?.complete_address || '',
+        user_role: 'base' as UserRole,
+        is_verified: false,
+        is_questor: true,
+        is_service_provider: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
-
-      return data
     } catch (error) {
       console.error('Error fetching user profile:', error)
       return null

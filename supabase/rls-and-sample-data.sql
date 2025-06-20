@@ -1,212 +1,131 @@
--- Row Level Security (RLS) Policies and Sample Data for QuestLink
--- Run this after the main schema migration
+-- =====================================================
+-- QuestLink Sample Data
+-- Test data for development and demonstration
+-- =====================================================
 
--- Enable RLS on all tables
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
-ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
-ALTER TABLE experiences ENABLE ROW LEVEL SECURITY;
-ALTER TABLE specialists ENABLE ROW LEVEL SECURITY;
-ALTER TABLE quests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE my_quests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE my_requests ENABLE ROW LEVEL SECURITY;
-ALTER TABLE service_providers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+-- Note: Run this AFTER the main schema setup
+-- This file contains sample data for testing the QuestLink platform
 
--- Users table policies
-CREATE POLICY "Users can view their own profile" ON users
-    FOR SELECT USING (auth.uid() = id);
+-- =====================================================
+-- SAMPLE USERS
+-- =====================================================
 
-CREATE POLICY "Users can update their own profile" ON users
-    FOR UPDATE USING (auth.uid() = id);
+-- Insert sample users (passwords are hashed versions of simple passwords for testing)
+INSERT INTO public.users (id, email, first_name, middle_name, last_name, mobile_number, password_hash, is_questor, is_service_provider, complete_address, user_role, is_verified) VALUES
+-- Admin user
+('550e8400-e29b-41d4-a716-446655440000', 'admin@questlink.com', 'Admin', '', 'User', '+639171234567', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', true, true, '123 Admin St, Quezon City, Metro Manila', 'admin', true),
 
-CREATE POLICY "Public users can view basic user info" ON users
-    FOR SELECT USING (true);
+-- Regular users
+('550e8400-e29b-41d4-a716-446655440001', 'john.doe@example.com', 'John', 'Michael', 'Doe', '+639171234568', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', true, false, '456 Main St, Makati City, Metro Manila', 'base', true),
+('550e8400-e29b-41d4-a716-446655440002', 'jane.smith@example.com', 'Jane', 'Elizabeth', 'Smith', '+639171234569', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', false, false, '789 Oak Ave, Taguig City, Metro Manila', 'specialist', true),
+('550e8400-e29b-41d4-a716-446655440003', 'mike.wilson@example.com', 'Mike', 'Robert', 'Wilson', '+639171234570', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', false, true, '321 Pine St, Pasig City, Metro Manila', 'service_provider', true),
+('550e8400-e29b-41d4-a716-446655440004', 'sarah.johnson@example.com', 'Sarah', 'Marie', 'Johnson', '+639171234571', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', true, false, '654 Elm St, Mandaluyong City, Metro Manila', 'base', true),
+('550e8400-e29b-41d4-a716-446655440005', 'alex.brown@example.com', 'Alex', 'David', 'Brown', '+639171234572', '$2b$10$rQZ8kJQZ8kJQZ8kJQZ8kJO', false, false, '987 Maple Ave, San Juan City, Metro Manila', 'specialist', true);
 
--- Profiles table policies
-CREATE POLICY "Users can view their own profile details" ON profiles
-    FOR SELECT USING (auth.uid() = user_id);
+-- =====================================================
+-- SAMPLE PROFILES
+-- =====================================================
 
-CREATE POLICY "Users can update their own profile details" ON profiles
-    FOR UPDATE USING (auth.uid() = user_id);
+INSERT INTO public.profiles (user_id, description, profile_picture, location, social_links) VALUES
+('550e8400-e29b-41d4-a716-446655440000', 'Platform administrator with extensive experience in marketplace management.', 'https://example.com/avatars/admin.jpg', 'Quezon City', ARRAY['https://linkedin.com/in/admin', 'https://twitter.com/admin']),
+('550e8400-e29b-41d4-a716-446655440001', 'Entrepreneur looking for talented individuals to help grow my business ventures.', 'https://example.com/avatars/john.jpg', 'Makati City', ARRAY['https://linkedin.com/in/johndoe']),
+('550e8400-e29b-41d4-a716-446655440002', 'Full-stack developer with 5+ years experience in web development and mobile apps.', 'https://example.com/avatars/jane.jpg', 'Taguig City', ARRAY['https://github.com/janesmith', 'https://linkedin.com/in/janesmith']),
+('550e8400-e29b-41d4-a716-446655440003', 'Business owner providing comprehensive digital marketing services.', 'https://example.com/avatars/mike.jpg', 'Pasig City', ARRAY['https://linkedin.com/in/mikewilson', 'https://facebook.com/mikewilsonbiz']),
+('550e8400-e29b-41d4-a716-446655440004', 'Creative professional specializing in graphic design and branding.', 'https://example.com/avatars/sarah.jpg', 'Mandaluyong City', ARRAY['https://behance.net/sarahjohnson', 'https://instagram.com/sarahdesigns']),
+('550e8400-e29b-41d4-a716-446655440005', 'Data scientist and AI specialist with expertise in machine learning.', 'https://example.com/avatars/alex.jpg', 'San Juan City', ARRAY['https://github.com/alexbrown', 'https://linkedin.com/in/alexbrown']);
 
-CREATE POLICY "Users can insert their own profile" ON profiles
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- =====================================================
+-- SAMPLE SPECIALISTS
+-- =====================================================
 
-CREATE POLICY "Public can view profiles" ON profiles
-    FOR SELECT USING (true);
+INSERT INTO public.specialists (user_id, category_tags, title, description, photo, is_verified, verification_documents) VALUES
+('550e8400-e29b-41d4-a716-446655440002', ARRAY['Web Development', 'Mobile Apps', 'React', 'Node.js'], 'Full-Stack Developer', 'Experienced developer specializing in modern web technologies. I create responsive, user-friendly applications using React, Node.js, and cloud technologies.', 'https://example.com/specialists/jane-portfolio.jpg', true, '["diploma.pdf", "certifications.pdf"]'::jsonb),
+('550e8400-e29b-41d4-a716-446655440005', ARRAY['Data Science', 'Machine Learning', 'Python', 'AI'], 'Data Scientist & AI Specialist', 'PhD in Computer Science with focus on machine learning and artificial intelligence. I help businesses leverage data for better decision making.', 'https://example.com/specialists/alex-portfolio.jpg', true, '["phd_diploma.pdf", "research_papers.pdf"]'::jsonb);
 
--- Reviews table policies
-CREATE POLICY "Users can view reviews about them" ON reviews
-    FOR SELECT USING (auth.uid() = user_id OR auth.uid() = reviewer_id);
+-- =====================================================
+-- SAMPLE SKILLS
+-- =====================================================
 
-CREATE POLICY "Users can create reviews" ON reviews
-    FOR INSERT WITH CHECK (auth.uid() = reviewer_id);
+INSERT INTO public.skills (user_id, skill_category, skill_sub_category, skill_name, proficiency, time_cost_per_hour, pricing, photo, is_active) VALUES
+-- Jane's skills
+('550e8400-e29b-41d4-a716-446655440002', 'Web Development', 'Frontend', 'React Development', 'expert', 8, 2500.00, 'https://example.com/skills/react.jpg', true),
+('550e8400-e29b-41d4-a716-446655440002', 'Web Development', 'Backend', 'Node.js Development', 'advanced', 8, 2200.00, 'https://example.com/skills/nodejs.jpg', true),
+('550e8400-e29b-41d4-a716-446655440002', 'Mobile Development', 'Cross-platform', 'React Native', 'advanced', 10, 2800.00, 'https://example.com/skills/react-native.jpg', true),
+('550e8400-e29b-41d4-a716-446655440002', 'Database', 'SQL', 'PostgreSQL', 'intermediate', 6, 1800.00, 'https://example.com/skills/postgresql.jpg', true),
 
-CREATE POLICY "Users can update their own reviews" ON reviews
-    FOR UPDATE USING (auth.uid() = reviewer_id);
+-- Alex's skills
+('550e8400-e29b-41d4-a716-446655440005', 'Data Science', 'Machine Learning', 'Python ML', 'expert', 12, 3500.00, 'https://example.com/skills/python-ml.jpg', true),
+('550e8400-e29b-41d4-a716-446655440005', 'Data Science', 'Analytics', 'Data Analysis', 'expert', 8, 3000.00, 'https://example.com/skills/data-analysis.jpg', true),
+('550e8400-e29b-41d4-a716-446655440005', 'AI', 'Deep Learning', 'Neural Networks', 'expert', 15, 4000.00, 'https://example.com/skills/neural-networks.jpg', true);
 
-CREATE POLICY "Public can view reviews" ON reviews
-    FOR SELECT USING (true);
+-- =====================================================
+-- SAMPLE EXPERIENCES
+-- =====================================================
 
--- Skills table policies
-CREATE POLICY "Users can manage their own skills" ON skills
-    FOR ALL USING (auth.uid() = user_id);
+INSERT INTO public.experiences (skill_id, user_id, title, description) VALUES
+-- Jane's experiences
+((SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440002' AND skill_name = 'React Development'), '550e8400-e29b-41d4-a716-446655440002', 'E-commerce Platform Development', 'Built a complete e-commerce platform for a retail client using React, Redux, and Stripe integration. Handled 10,000+ daily users.'),
+((SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440002' AND skill_name = 'Node.js Development'), '550e8400-e29b-41d4-a716-446655440002', 'API Development for FinTech', 'Developed secure REST APIs for a financial technology startup, implementing OAuth2 authentication and real-time transaction processing.'),
 
-CREATE POLICY "Public can view active skills" ON skills
-    FOR SELECT USING (is_active = true);
+-- Alex's experiences
+((SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440005' AND skill_name = 'Python ML'), '550e8400-e29b-41d4-a716-446655440005', 'Predictive Analytics for Retail', 'Implemented machine learning models to predict customer behavior and optimize inventory management for a major retail chain.'),
+((SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440005' AND skill_name = 'Neural Networks'), '550e8400-e29b-41d4-a716-446655440005', 'Computer Vision for Healthcare', 'Developed deep learning models for medical image analysis, achieving 95% accuracy in diagnostic predictions.');
 
--- Experiences table policies
-CREATE POLICY "Users can manage their own experiences" ON experiences
-    FOR ALL USING (auth.uid() = user_id);
+-- =====================================================
+-- SAMPLE SERVICE PROVIDERS
+-- =====================================================
 
-CREATE POLICY "Public can view experiences" ON experiences
-    FOR SELECT USING (true);
+INSERT INTO public.service_providers (user_id, business_name, business_description, business_address, contact_person, business_phone, business_email, website_url, business_hours, category_tags, is_verified, verification_documents) VALUES
+('550e8400-e29b-41d4-a716-446655440003', 'Wilson Digital Marketing', 'Full-service digital marketing agency specializing in social media management, SEO, and online advertising campaigns.', '321 Pine St, Pasig City, Metro Manila', 'Mike Wilson', '+639171234570', 'info@wilsondigital.com', 'https://wilsondigital.com', '{"monday": "9:00-18:00", "tuesday": "9:00-18:00", "wednesday": "9:00-18:00", "thursday": "9:00-18:00", "friday": "9:00-18:00", "saturday": "10:00-16:00", "sunday": "closed"}'::jsonb, ARRAY['Digital Marketing', 'SEO', 'Social Media', 'Advertising'], true, '["business_permit.pdf", "tax_certificate.pdf"]'::jsonb);
 
--- Specialists table policies
-CREATE POLICY "Users can manage their own specialist profile" ON specialists
-    FOR ALL USING (auth.uid() = user_id);
+-- =====================================================
+-- SAMPLE SERVICES
+-- =====================================================
 
-CREATE POLICY "Public can view verified specialists" ON specialists
-    FOR SELECT USING (is_verified = true);
+INSERT INTO public.services (service_provider_id, title, description, photo, pricing, category_tags, available_days, available_time, is_active) VALUES
+((SELECT id FROM public.service_providers WHERE business_name = 'Wilson Digital Marketing'), 'Social Media Management', 'Complete social media management including content creation, posting schedule, community management, and monthly analytics reports.', 'https://example.com/services/social-media.jpg', 15000.00, ARRAY['Social Media', 'Content Creation', 'Marketing'], ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], '9:00 AM - 6:00 PM', true),
+((SELECT id FROM public.service_providers WHERE business_name = 'Wilson Digital Marketing'), 'SEO Optimization', 'Comprehensive SEO audit and optimization service including keyword research, on-page optimization, and monthly progress reports.', 'https://example.com/services/seo.jpg', 25000.00, ARRAY['SEO', 'Website Optimization', 'Marketing'], ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], '9:00 AM - 6:00 PM', true),
+((SELECT id FROM public.service_providers WHERE business_name = 'Wilson Digital Marketing'), 'Google Ads Management', 'Professional Google Ads campaign setup and management with budget optimization and conversion tracking.', 'https://example.com/services/google-ads.jpg', 20000.00, ARRAY['Google Ads', 'PPC', 'Advertising'], ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], '9:00 AM - 6:00 PM', true);
 
--- Quests table policies
-CREATE POLICY "Quest owners can manage their quests" ON quests
-    FOR ALL USING (auth.uid() = quest_owner_id);
+-- =====================================================
+-- SAMPLE QUESTS
+-- =====================================================
 
-CREATE POLICY "Public can view open quests" ON quests
-    FOR SELECT USING (status = 'open');
+INSERT INTO public.quests (quest_owner_id, title, description, photo, start_date, end_date, start_time, end_time, pricing, tags, status, location, requirements) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'E-commerce Website Development', 'Need a professional e-commerce website for my online clothing store. Should include product catalog, shopping cart, payment integration, and admin panel.', 'https://example.com/quests/ecommerce.jpg', '2025-07-01', '2025-07-31', '09:00', '17:00', 50000.00, ARRAY['Web Development', 'E-commerce', 'React', 'Payment Integration'], 'open', 'Makati City', 'Experience with React, Node.js, and payment gateways required. Portfolio of previous e-commerce projects preferred.'),
+('550e8400-e29b-41d4-a716-446655440001', 'Mobile App UI/UX Design', 'Looking for a talented designer to create modern, user-friendly UI/UX for our fitness tracking mobile app.', 'https://example.com/quests/mobile-design.jpg', '2025-06-25', '2025-07-15', '10:00', '16:00', 30000.00, ARRAY['UI/UX Design', 'Mobile App', 'Figma', 'Prototyping'], 'open', 'Makati City', 'Proficiency in Figma, experience with mobile app design, understanding of iOS and Android design guidelines.'),
+('550e8400-e29b-41d4-a716-446655440004', 'Data Analysis for Marketing Campaign', 'Need help analyzing customer data and campaign performance to optimize our marketing strategy.', 'https://example.com/quests/data-analysis.jpg', '2025-06-30', '2025-07-10', '14:00', '18:00', 25000.00, ARRAY['Data Analysis', 'Marketing', 'Python', 'Excel'], 'open', 'Mandaluyong City', 'Experience with Python, pandas, and data visualization tools. Marketing analytics background preferred.');
 
-CREATE POLICY "Authenticated users can view all quests" ON quests
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- =====================================================
+-- SAMPLE QUEST APPLICATIONS
+-- =====================================================
 
--- My Quests table policies
-CREATE POLICY "Users can view their accepted quests" ON my_quests
-    FOR SELECT USING (auth.uid() = user_id);
+INSERT INTO public.my_quests (quest_id, user_id, note, status) VALUES
+((SELECT id FROM public.quests WHERE title = 'E-commerce Website Development'), '550e8400-e29b-41d4-a716-446655440002', 'I have 5+ years of experience building e-commerce platforms with React and Node.js. I can deliver a fully functional website with all requested features within the timeline.', 'pending'),
+((SELECT id FROM public.quests WHERE title = 'Data Analysis for Marketing Campaign'), '550e8400-e29b-41d4-a716-446655440005', 'PhD in Data Science with extensive experience in marketing analytics. I can provide comprehensive analysis and actionable insights for your campaign optimization.', 'pending');
 
-CREATE POLICY "Quest owners can view quest applications" ON my_quests
-    FOR SELECT USING (
-        auth.uid() IN (
-            SELECT quest_owner_id FROM quests WHERE id = quest_id
-        )
-    );
+-- =====================================================
+-- SAMPLE REVIEWS
+-- =====================================================
 
-CREATE POLICY "Users can apply for quests" ON my_quests
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+INSERT INTO public.reviews (user_id, reviewer_id, review_type, rating, comments, picture) VALUES
+('550e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440001', 'specialist', 5, 'Jane delivered an exceptional website that exceeded our expectations. Professional, timely, and great communication throughout the project.', 'https://example.com/reviews/review1.jpg'),
+('550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440004', 'specialist', 5, 'Alex provided incredible insights from our data analysis. The recommendations led to a 40% improvement in our campaign performance.', 'https://example.com/reviews/review2.jpg'),
+('550e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440001', 'service_provider', 4, 'Wilson Digital Marketing helped us establish a strong online presence. Their social media management service is top-notch.', 'https://example.com/reviews/review3.jpg');
 
-CREATE POLICY "Users can update their quest applications" ON my_quests
-    FOR UPDATE USING (auth.uid() = user_id);
+-- =====================================================
+-- SAMPLE SPECIALIST REQUESTS
+-- =====================================================
 
-CREATE POLICY "Quest owners can update quest applications" ON my_quests
-    FOR UPDATE USING (
-        auth.uid() IN (
-            SELECT quest_owner_id FROM quests WHERE id = quest_id
-        )
-    );
+INSERT INTO public.my_requests (specialist_id, requester_id, skill_id, title, description, start_date, end_date, start_time, end_time, pricing, status) VALUES
+((SELECT id FROM public.specialists WHERE user_id = '550e8400-e29b-41d4-a716-446655440002'), '550e8400-e29b-41d4-a716-446655440004', (SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440002' AND skill_name = 'React Development'), 'Portfolio Website Development', 'Need a professional portfolio website to showcase my design work. Should be responsive and include a contact form.', '2025-07-05', '2025-07-20', '10:00', '16:00', 35000.00, 'pending'),
+((SELECT id FROM public.specialists WHERE user_id = '550e8400-e29b-41d4-a716-446655440005'), '550e8400-e29b-41d4-a716-446655440001', (SELECT id FROM public.skills WHERE user_id = '550e8400-e29b-41d4-a716-446655440005' AND skill_name = 'Data Analysis'), 'Customer Behavior Analysis', 'Analyze customer purchase patterns to identify opportunities for product recommendations and cross-selling.', '2025-06-28', '2025-07-12', '09:00', '17:00', 40000.00, 'accepted');
 
--- My Requests table policies
-CREATE POLICY "Users can view their requests" ON my_requests
-    FOR SELECT USING (auth.uid() = user_id OR auth.uid() = specialist_id);
+-- =====================================================
+-- VERIFICATION MESSAGE
+-- =====================================================
 
-CREATE POLICY "Users can create requests" ON my_requests
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update their requests" ON my_requests
-    FOR UPDATE USING (auth.uid() = user_id);
-
-CREATE POLICY "Specialists can update requests made to them" ON my_requests
-    FOR UPDATE USING (auth.uid() = specialist_id);
-
--- Service Providers table policies
-CREATE POLICY "Users can manage their service provider profile" ON service_providers
-    FOR ALL USING (auth.uid() = user_id);
-
-CREATE POLICY "Public can view verified service providers" ON service_providers
-    FOR SELECT USING (is_verified = true);
-
--- Services table policies
-CREATE POLICY "Service providers can manage their services" ON services
-    FOR ALL USING (
-        auth.uid() IN (
-            SELECT user_id FROM service_providers WHERE id = service_provider_id
-        )
-    );
-
-CREATE POLICY "Public can view active services" ON services
-    FOR SELECT USING (is_active = true);
-
--- Admin policies (for users with admin role)
-CREATE POLICY "Admins can view all data" ON users
-    FOR SELECT USING (
-        auth.uid() IN (
-            SELECT id FROM users WHERE user_role IN ('admin', 'sub_admin')
-        )
-    );
-
-CREATE POLICY "Admins can update user verification status" ON users
-    FOR UPDATE USING (
-        auth.uid() IN (
-            SELECT id FROM users WHERE user_role IN ('admin', 'sub_admin')
-        )
-    );
-
-CREATE POLICY "Admins can verify specialists" ON specialists
-    FOR UPDATE USING (
-        auth.uid() IN (
-            SELECT id FROM users WHERE user_role IN ('admin', 'sub_admin')
-        )
-    );
-
-CREATE POLICY "Admins can verify service providers" ON service_providers
-    FOR UPDATE USING (
-        auth.uid() IN (
-            SELECT id FROM users WHERE user_role IN ('admin', 'sub_admin')
-        )
-    );
-
--- Utility functions
-CREATE OR REPLACE FUNCTION get_user_average_rating(user_uuid UUID, rating_type review_type)
-RETURNS DECIMAL(3,2) AS $$
-BEGIN
-    RETURN (
-        SELECT COALESCE(AVG(rating), 0)
-        FROM reviews
-        WHERE user_id = user_uuid AND review_type = rating_type
-    );
-END;
-$$ LANGUAGE plpgsql;
-
--- Function to get user's total completed quests
-CREATE OR REPLACE FUNCTION get_user_completed_quests(user_uuid UUID)
-RETURNS INTEGER AS $$
-BEGIN
-    RETURN (
-        SELECT COUNT(*)
-        FROM my_quests
-        WHERE user_id = user_uuid AND status = 'completed'
-    );
-END;
-$$ LANGUAGE plpgsql;
-
--- Function to get specialist's total completed requests
-CREATE OR REPLACE FUNCTION get_specialist_completed_requests(user_uuid UUID)
-RETURNS INTEGER AS $$
-BEGIN
-    RETURN (
-        SELECT COUNT(*)
-        FROM my_requests
-        WHERE specialist_id = user_uuid AND status = 'completed'
-    );
-END;
-$$ LANGUAGE plpgsql;
-
--- Insert sample admin user (for testing)
-INSERT INTO users (id, email, first_name, last_name, mobile_number, password_hash, complete_address, user_role) VALUES
-('00000000-0000-0000-0000-000000000001', 'admin@questlink.com', 'Admin', 'User', '+1234567890', crypt('admin123', gen_salt('bf')), '123 Admin St, Admin City', 'admin')
-ON CONFLICT (email) DO NOTHING;
-
--- Insert sample profile for admin
-INSERT INTO profiles (user_id, description, location) VALUES
-('00000000-0000-0000-0000-000000000001', 'QuestLink Administrator', 'Admin City')
-ON CONFLICT (user_id) DO NOTHING;
+-- Insert a verification record to confirm setup completion
+INSERT INTO public.users (id, email, first_name, last_name, mobile_number, password_hash, complete_address, user_role, is_verified) VALUES
+('00000000-0000-0000-0000-000000000000', 'setup@questlink.system', 'Database', 'Setup', '+639999999999', 'system', 'System Generated', 'admin', true)
+ON CONFLICT (id) DO NOTHING;
