@@ -242,7 +242,7 @@ export default function ProfilePage() {
 
           {/* Main Profile Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Personal Information */}
+            {/* Personal Informations */}
             <Card>
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
