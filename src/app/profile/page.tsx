@@ -32,7 +32,18 @@ export default function ProfilePage() {
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [profileData, setProfileData] = useState({
+  const [profileData, setProfileData] = useState<{
+    first_name: string;
+    last_name: string;
+    email: string;
+    mobile_number: string;
+    complete_address: string;
+    bio: string;
+    skills: string[];
+    experience: string;
+    portfolio_links: string[];
+    availability: string;
+  }>({
     first_name: '',
     last_name: '',
     email: '',
@@ -52,22 +63,23 @@ export default function ProfilePage() {
     }
 
     if (userProfile) {
+      const profile = userProfile as any;
       setProfileData({
         first_name: userProfile.first_name || '',
         last_name: userProfile.last_name || '',
         email: user?.email || '',
         mobile_number: userProfile.mobile_number || '',
         complete_address: userProfile.complete_address || '',
-        bio: userProfile.profiles?.[0]?.bio || '',
-        skills: userProfile.profiles?.[0]?.skills || [],
-        experience: userProfile.profiles?.[0]?.experience || '',
-        portfolio_links: userProfile.profiles?.[0]?.portfolio_links || [],
-        availability: userProfile.profiles?.[0]?.availability || 'available'
+        bio: profile.profiles?.[0]?.description || '',
+        skills: profile.profiles?.[0]?.social_links || [],
+        experience: profile.profiles?.[0]?.location || '',
+        portfolio_links: profile.profiles?.[0]?.social_links || [],
+        availability: profile.profiles?.[0]?.alt_photo_description || 'available'
       })
     }
   }, [user, userProfile, loading, router])
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setProfileData(prev => ({
       ...prev,
       [field]: value
@@ -90,22 +102,22 @@ export default function ProfilePage() {
 
   const addSkill = (skill: string) => {
     if (skill && !profileData.skills.includes(skill)) {
-      handleInputChange('skills', [...profileData.skills, skill])
+      handleInputChange('skills', [...profileData.skills, skill] as string[])
     }
   }
 
   const removeSkill = (skillToRemove: string) => {
-    handleInputChange('skills', profileData.skills.filter(skill => skill !== skillToRemove))
+    handleInputChange('skills', profileData.skills.filter(skill => skill !== skillToRemove) as string[])
   }
 
   const addPortfolioLink = (link: string) => {
     if (link && !profileData.portfolio_links.includes(link)) {
-      handleInputChange('portfolio_links', [...profileData.portfolio_links, link])
+      handleInputChange('portfolio_links', [...profileData.portfolio_links, link] as string[])
     }
   }
 
   const removePortfolioLink = (linkToRemove: string) => {
-    handleInputChange('portfolio_links', profileData.portfolio_links.filter(link => link !== linkToRemove))
+    handleInputChange('portfolio_links', profileData.portfolio_links.filter(link => link !== linkToRemove) as string[])
   }
 
   if (loading) {
@@ -185,7 +197,7 @@ export default function ProfilePage() {
               <CardContent className="flex flex-col items-center space-y-4">
                 <div className="relative">
                   <Avatar className="h-32 w-32">
-                    <AvatarImage src={userProfile?.profiles?.[0]?.profile_picture} />
+                  <AvatarImage src={(userProfile as any)?.profiles?.[0]?.profile_picture} />
                     <AvatarFallback className="text-2xl">{userInitials}</AvatarFallback>
                   </Avatar>
                   {isEditing && (
