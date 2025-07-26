@@ -229,9 +229,9 @@ export function QuestCreationForm() {
               disabled={loading}
               maxLength={200}
             />
-            <p className="text-sm text-muted-foreground">
-              {formData.title.length}/200 characters
-            </p>
+              <p className="text-sm text-muted-foreground">
+                We'll never share your personal information with anyone else.
+              </p>
           </div>
 
           {/* Description */}
@@ -381,108 +381,4 @@ export function QuestCreationForm() {
           <div className="space-y-4">
             <div>
               <Label>Tags * (Select or add custom tags)</Label>
-              <p className="text-sm text-muted-foreground">
-                Help specialists find your quest by adding relevant tags
-              </p>
-            </div>
-
-            {/* Suggested Tags */}
-            <div>
-              <p className="text-sm font-medium mb-2">Suggested Tags:</p>
-              <div className="flex flex-wrap gap-2">
-                {suggestedTags.map(tag => (
-                  <Badge
-                    key={tag}
-                    variant={formData.tags.includes(tag) ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-primary/10"
-                    onClick={() => formData.tags.includes(tag) ? removeTag(tag) : addTag(tag)}
-                  >
-                    {tag}
-                    {formData.tags.includes(tag) && (
-                      <X className="ml-1 h-3 w-3" />
-                    )}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Tag Input */}
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Tag className="absolute left-3 top-3 h-4 w-4 text-gray-500 dark:text-gray-400 z-10 pointer-events-none" />
-                <Input
-                  name="newTag"
-                  placeholder="Add custom tag..."
-                  value={formData.newTag}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  disabled={loading || formData.tags.length >= 10}
-                  className="pl-10 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddNewTag}
-                disabled={!formData.newTag.trim() || formData.tags.length >= 10 || loading}
-                className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {/* Selected Tags */}
-            {formData.tags.length > 0 && (
-              <div>
-                <p className="text-sm font-medium mb-2">Selected Tags ({formData.tags.length}/10):</p>
-                <div className="flex flex-wrap gap-2">
-                  {formData.tags.map(tag => (
-                    <Badge key={tag} variant="default" className="pr-1">
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(tag)}
-                        className="ml-1 hover:bg-destructive/20 rounded-full p-0.5"
-                        disabled={loading}
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex gap-4 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-              disabled={loading}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1"
-              variant="quest"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Quest...
-                </>
-              ) : (
-                'Create Quest'
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
-  )
-}
+              <p

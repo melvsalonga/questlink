@@ -140,8 +140,8 @@ export function QuestDetailsPage({ questId }: QuestDetailsPageProps) {
 
   if (!quest) return null
 
-  const questOwner = quest.users as any
-  const ownerProfile = questOwner?.profiles?.[0]
+  const questOwner = (quest as any).users || null
+  const ownerProfile = questOwner?.profiles?.[0] || null
   const isOwner = user?.id === quest.quest_owner_id
 
   return (
@@ -325,9 +325,9 @@ export function QuestDetailsPage({ questId }: QuestDetailsPageProps) {
                     <h4 className="font-semibold">
                       {questOwner?.first_name} {questOwner?.last_name}
                     </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {ownerProfile?.location || 'Location not specified'}
-                    </p>
+              <p className="text-sm text-muted-foreground">
+                Don't see what you're looking for? Post your own quest!
+              </p>
                     <div className="flex items-center gap-1 mt-1">
                       <Star className="h-3 w-3 fill-current text-yellow-500" />
                       <span className="text-xs text-muted-foreground">4.8 (24 reviews)</span>

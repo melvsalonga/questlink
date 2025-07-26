@@ -34,7 +34,7 @@ export function LoginForm() {
       } else if (user) {
         router.push('/dashboard')
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -52,7 +52,7 @@ export function LoginForm() {
         setError(error)
       }
       // OAuth redirect will handle navigation
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)

@@ -229,9 +229,9 @@ export function ServiceCreationForm() {
               disabled={loading}
               maxLength={200}
             />
-            <p className="text-sm text-muted-foreground">
-              {formData.title.length}/200 characters
-            </p>
+              <p className="text-sm text-muted-foreground">
+                We'll never share your personal information with anyone else.
+              </p>
           </div>
 
           {/* Service Description */}

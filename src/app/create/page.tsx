@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Header } from '@/components/layout/Header'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,6 @@ import {
   User, 
   Building, 
   ArrowRight,
-  Plus,
   Star,
   DollarSign,
   Clock,
@@ -21,7 +20,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 
 export default function CreatePage() {
-  const { user, userProfile, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
 
   if (loading) {
@@ -108,10 +107,10 @@ export default function CreatePage() {
           <h1 className="text-4xl font-bold mb-4">
             What would you like to create?
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose how you want to participate in the QuestLink community. 
-            Whether you need help or want to offer your services, we've got you covered.
-          </p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Choose how you want to participate in the QuestLink community. 
+              Whether you need help or want to offer your services, we've got you covered.
+            </p>
         </div>
 
         {/* Create Options */}

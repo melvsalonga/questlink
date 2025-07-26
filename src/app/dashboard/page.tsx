@@ -11,7 +11,6 @@ import {
   User, 
   Settings, 
   Star, 
-  TrendingUp, 
   Calendar, 
   DollarSign,
   Eye,
@@ -100,7 +99,6 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div className="flex items-center space-x-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={userProfile?.profiles?.[0]?.profile_picture} />
               <AvatarFallback className="text-lg">{userInitials}</AvatarFallback>
             </Avatar>
             <div>

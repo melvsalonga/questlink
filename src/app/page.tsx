@@ -68,9 +68,17 @@ export default function Home() {
     created_at: '2025-06-20',
     updated_at: '2025-06-20',
     service_providers: {
+      id: '1',
+      user_id: '1',
       title: 'TechFix Solutions',
+      description: 'Professional tech services',
       location: 'Makati City',
       is_verified: true,
+      verification_documents: [],
+      available_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      available_time: '9:00 AM - 6:00 PM',
+      created_at: '2025-06-20',
+      updated_at: '2025-06-20',
       users: {
         first_name: 'Mike',
         last_name: 'Wilson',
@@ -113,11 +121,11 @@ export default function Home() {
                 <h2 className="text-2xl sm:text-3xl font-semibold bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-300 dark:to-slate-100 bg-clip-text text-transparent">
                   Real-World Quests. Real-Time Connections.
                 </h2>
-                <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                  A freelance marketplace platform by <span className="font-semibold text-primary">Cirqle</span>, inspired by anime guild boards.
-                  Connect with specialists, post quests, and discover services in your area.
-                  <span className="block mt-2 text-primary font-medium">Join the adventure today!</span>
-                </p>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                A freelance marketplace platform by <span className="font-semibold text-primary">Cirqle</span>, inspired by anime guild boards.
+                Connect with specialists, post quests, and discover services in your area.
+                <span className="block mt-2 text-primary font-medium">Join the adventure today!</span>
+              </p>
               </div>
 
               {/* CTA Buttons */}
