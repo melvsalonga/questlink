@@ -19,14 +19,65 @@ QuestLink serves both individuals and small business owners, allowing them to of
 
 ## 🚀 Tech Stack
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS v4, Custom CSS Variables
-- **UI Components**: Custom component library with Lucide React icons
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth with social login support
+### **Frontend**
+- **Framework**: Next.js 15 (App Router)
+- **React**: React 19
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Custom component library built with Radix UI primitives
+- **Icons**: Lucide React
+- **Animations**: Framer Motion
 - **Fonts**: Poppins (Google Fonts)
-- **Animations**: Framer Motion, Custom CSS animations
-- **Development**: ESLint, Prettier, Husky
+
+### **Backend & Database**
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Database**: Supabase PostgreSQL with Row Level Security (RLS)
+- **Authentication**: Supabase Auth with email verification
+- **ORM/Client**: Supabase JavaScript client
+- **Database Features**: 
+  - Custom enums and types
+  - Triggers for timestamps
+  - Performance indexes
+  - Comprehensive RLS policies
+
+### **Development Tools**
+- **Package Manager**: npm
+- **Linting**: ESLint 9 with Next.js config
+- **Formatting**: Prettier 3.5.3
+- **Git Hooks**: Husky 9.1.7
+- **Staged Files**: lint-staged 16.1.2
+- **Build Tool**: Next.js with Turbopack (dev mode)
+
+### **UI Component Library**
+Built on top of Radix UI primitives:
+- `@radix-ui/react-avatar`
+- `@radix-ui/react-checkbox`
+- `@radix-ui/react-label`
+- `@radix-ui/react-select`
+- `@radix-ui/react-separator`
+- `@radix-ui/react-tabs`
+
+### **Supabase Integration**
+- `@supabase/supabase-js` 2.50.0
+- `@supabase/ssr` 0.6.1
+- `@supabase/auth-helpers-nextjs` 0.10.0
+- `@supabase/auth-ui-react` 0.4.7
+- `@supabase/auth-ui-shared` 0.1.8
+
+### **Styling & Design**
+- **CSS Framework**: Tailwind CSS v4
+- **Design System**: Custom CSS variables with anime-inspired aesthetics
+- **Component Variants**: class-variance-authority
+- **CSS Utilities**: clsx, tailwind-merge
+- **Responsive**: Mobile-first approach
+
+### **Key Architecture Patterns**
+- App Router (Next.js 15)
+- Server-Side Rendering (SSR)
+- Client-Side Rendering (CSR) for interactive components
+- Custom hooks for state management
+- Component composition patterns
+- Responsive design patterns
 
 ## 🛠️ Getting Started
 
